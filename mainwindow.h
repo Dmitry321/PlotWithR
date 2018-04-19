@@ -42,6 +42,8 @@ private:
     QString recentDirectory;
     QString recentSaveDirectory;
     QString curFile;
+    QString cur_XTitle;
+    QString cur_YTitle;
     int curDataNum;
     double cur_xmin;
     double cur_xmax;
@@ -62,6 +64,7 @@ private:
     void addplotline(const QString &dataNameN);
     void plotSvg();
     void axisRescale();
+    void axisRename();
 };
 
 #endif // MAINWINDOW_H

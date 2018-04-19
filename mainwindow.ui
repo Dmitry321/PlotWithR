@@ -88,8 +88,8 @@
       <widget class="QPushButton" name="pushButton_2">
        <property name="geometry">
         <rect>
-         <x>50</x>
-         <y>220</y>
+         <x>260</x>
+         <y>120</y>
          <width>85</width>
          <height>27</height>
         </rect>
@@ -133,6 +133,61 @@
         </item>
        </layout>
       </widget>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="geometry">
+        <rect>
+         <x>430</x>
+         <y>10</y>
+         <width>171</width>
+         <height>96</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Axis Title</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>X axis</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEditXTitle"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>Y axis</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEditYTitle"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QComboBox" name="comboBoxPlotVeriant">
+       <property name="geometry">
+        <rect>
+         <x>440</x>
+         <y>120</y>
+         <width>101</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>All in one</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>On greed</string>
+        </property>
+       </item>
+      </widget>
      </widget>
     </item>
     <item>
@@ -146,7 +201,7 @@
      <x>0</x>
      <y>0</y>
      <width>822</width>
-     <height>27</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

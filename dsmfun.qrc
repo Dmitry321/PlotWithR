@@ -1,6 +1,5 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-    <file>dsmread.R</file>
-</qresource>
+<RCC>
+    <qresource prefix="/Rfile">
+        <file>dsmread.R</file>
+    </qresource>
 </RCC>
-

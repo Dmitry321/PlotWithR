@@ -94,12 +94,17 @@ void MainWindow::on_actionOpen_dsc_2_triggered()
     cur_ymin = 1000000.0;
     cur_ymax = -1000000.0;
 
+    cur_XTitle = "X";
+
+    cur_YTitle = "Y";
+
     if(openNewFile("datas0"))
     {
 
         curDataNum = 0;
         plot();
         axisRescale();
+        axisRename();
         plotSvg();
         ui->actionAdd_dsc->setEnabled(true);
     }
@@ -195,6 +200,11 @@ bool MainWindow::openNewFile(const QString &dataNum)
                 ui->lineEditXdelta->setText(QString::number(x_delta));
                 ui->lineEditYdelta->setText(QString::number(y_delta));
 
+                ui->lineEditXTitle->setText(cur_XTitle);
+                ui->lineEditYTitle->setText(cur_YTitle);
+
+
+
                 return true;
 
 //                // For debug reassons ============================================
@@ -276,7 +286,36 @@ void MainWindow::loadRlibraries()
     txt = "suppressMessages(library(scales))";
     m_R.parseEvalQ(txt);
 
-    txt = "source('/home/dumsky/R/dsmread.R')";
+    txt = "suppressMessages(library(gridExtra))";
+    m_R.parseEvalQ(txt);
+
+    // std::string => QByteArray
+    //QByteArray byteArray(stdString.c_str(), stdString.length());
+
+    // QByteArray => std::string
+    //std::string stdString(byteArray.constData(), byteArray.length());
+
+    // Считать фунуцию из R файла и загрузить ее в R
+    QString qrcdata;
+    QString fileName(":/Rfile/dsmread.R");
+
+    QFile file(fileName);
+    if(!file.open(QIODevice::ReadOnly)) {
+        qDebug()<<"filenot opened"<<endl;
+    }
+    else
+    {
+        //qDebug()<<"file opened"<<endl;
+        qrcdata = file.readAll();
+    }
+
+    file.close();
+
+    //qDebug()<<qrcdata<<endl;
+
+    txt = qrcdata.toStdString();
+
+    //txt = "source('/home/dumsky/R/dsmread.R')";
     m_R.parseEvalQ(txt);
 
 }
@@ -290,8 +329,26 @@ void MainWindow::axisRescale()
     std::string cmd3 = "scale_y_continuous(limits=c(y_min,y_max), breaks=seq(from = y_min, to = y_max, by = y_delta))";
 
     std::string cmd = "bp = bp + " + cmd2 + cmd3;
+
+    //std::string cmd = "bp + " + cmd2 + cmd3;
+
     m_R.parseEvalQ(cmd);
 }
+
+//===========================================================================
+// Rename Axis
+//===========================================================================
+void MainWindow::axisRename()
+{
+    std::string cmd2 = "labs(title = \"\", x = \"" + cur_XTitle.toStdString() + "\", y = \"" + cur_YTitle.toStdString() + "\", color = \"\n\", size=16) +";
+    //std::string cmd2 = "scale_x_continuous(expand = c(0, 0), limits=c(x_min,x_max), breaks=seq(from = x_min, to = x_max, by = x_delta)) +";
+    //std::string cmd3 = "scale_y_continuous(limits=c(y_min,y_max), breaks=seq(from = y_min, to = y_max, by = y_delta))";
+
+    std::string cmd = "bp = bp + " + cmd2;
+
+    m_R.parseEvalQ(cmd);
+}
+
 
 //===========================================================================
 // Plot svg for qt widget display
@@ -321,7 +378,7 @@ void MainWindow::plot(void) {
     std::string cmd1 = "bp = ggplot() + geom_line(data = datas0, aes(x = V1, y = V2), colour=\"black\", size=line_with)+";
 //    std::string cmd2 = "scale_x_continuous(expand = c(0, 0), limits=c(x_min,x_max), breaks=seq(from = x_min, to = x_max, by = x_delta)) +";
 //    std::string cmd3 = "scale_y_continuous(limits=c(y_min,y_max), breaks=seq(from = y_min, to = y_max, by = y_delta)) +";
-    std::string cmd4 = "labs(title = \"\", x = \"DP\", y = \"P\", color = \"\n\", size=16) +";
+//    std::string cmd4 = "labs(title = \"\", x = \"DP\", y = \"P\", color = \"\n\", size=16) +";
     std::string cmd5 = "theme_bw() +";
     std::string cmd6 = "theme(axis.text.x = element_text(colour = \"black\", size = 16), axis.title.x = element_text(size = 16,hjust = 0.5)) +";
     std::string cmd7 = "theme(axis.text.y = element_text(colour = \"black\", size = 16), axis.title.y = element_text(size = 16,hjust = 0.5)) +";
@@ -329,7 +386,7 @@ void MainWindow::plot(void) {
     std::string cmd9 = "theme(panel.background = element_rect(fill = \"white\"),plot.margin = margin(0.5, 2, 0.5, 0.2, \"cm\"),plot.background = element_rect(fill = \"white\", colour = \"white\", size=0));";
     //std::string cmd9 = " ggsave(file=tfile,plot=bp, width = 10, height = 5, dpi = 300);";
     //std::string cmd10 = "print(bp); dev.off();";
-    std::string cmd = cmd1  + cmd4 + cmd5 + cmd6 + cmd7 + cmd8 + cmd9; //
+    std::string cmd = cmd1  + /*cmd4 +*/ cmd5 + cmd6 + cmd7 + cmd8 + cmd9; //
     m_R.parseEvalQ(cmd);
    // qDebug() << QString::fromStdString(cmd);
 
@@ -410,7 +467,11 @@ void MainWindow::on_pushButton_2_clicked()
     m_R["x_delta"] = ui->lineEditXdelta->text().toDouble();
     m_R["y_delta"] = ui->lineEditYdelta->text().toDouble();
 
+    cur_XTitle = ui->lineEditXTitle->text();
+    cur_YTitle = ui->lineEditYTitle->text();
+
     axisRescale();
+    axisRename();
     plotSvg();
 
     //plot();
